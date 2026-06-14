@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Principal Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <h1>📚 School Monitoring System</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#dashboard" onclick="loadDashboard()">Dashboard</a></li>
+                <li><a href="#teachers" onclick="loadTeachers()">Teachers</a></li>
+                <li><a href="#records" onclick="loadRecords()">Records</a></li>
+                <li><a href="#performance" onclick="loadPerformance()">Performance</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <h2>Principal Dashboard</h2>
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <h3>Total Teachers</h3>
+                        <p class="big-number" id="totalTeachers">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Total Classes</h3>
+                        <p class="big-number" id="totalClasses">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Avg. Attendance (This Week)</h3>
+                        <p class="big-number" id="avgAttendance">0%</p>
+                    </div>
+                    <div class="card">
+                        <h3>Avg. Uniform Compliance</h3>
+                        <p class="big-number" id="avgUniform">0%</p>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-box">
+                        <h3>Attendance Trend (Last 30 Days)</h3>
+                        <canvas id="attendanceChart"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <h3>Teacher Performance Distribution</h3>
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Teachers Section -->
+            <section id="teachers" class="section">
+                <h2>Teachers Management</h2>
+                
+                <div class="form-box">
+                    <h3>Add New Teacher</h3>
+                    <form id="teacherForm" onsubmit="addTeacher(event)">
+                        <input type="text" placeholder="Name" id="teacherName" required>
+                        <input type="text" placeholder="Employee ID" id="employeeId" required>
+                        <input type="email" placeholder="Email" id="teacherEmail">
+                        <input type="text" placeholder="Phone" id="teacherPhone">
+                        <input type="text" placeholder="Department" id="department">
+                        <input type="date" placeholder="Joining Date" id="joiningDate">
+                        <button type="submit">Add Teacher</button>
+                    </form>
+                </div>
+
+                <div class="table-box">
+                    <h3>All Teachers</h3>
+                    <table id="teachersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Employee ID</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachersList">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Records Section -->
+            <section id="records" class="section">
+                <h2>Daily Records</h2>
+
+                <div class="record-tabs">
+                    <button class="tab-button active" onclick="switchTab('attendance')">Attendance</button>
+                    <button class="tab-button" onclick="switchTab('uniform')">Uniform</button>
+                    <button class="tab-button" onclick="switchTab('homework')">Homework</button>
+                    <button class="tab-button" onclick="switchTab('latecomers')">Late Comers</button>
+                </div>
+
+                <!-- Attendance Tab -->
+                <div id="attendance" class="tab-content active">
+                    <form onsubmit="recordAttendance(event)">
+                        <h3>Record Daily Attendance</h3>
+                        <input type="number" id="classId" placeholder="Class ID" required>
+                        <input type="number" id="teacherId" placeholder="Teacher ID" required>
+                        <input type="date" id="attendanceDate" required>
+                        <input type="number" id="totalStudents" placeholder="Total Students" required>
+                        <input type="number" id="presentStudents" placeholder="Present Students" required>
+                        <button type="submit">Record Attendance</button>
+                    </form>
+                </div>
+
+                <!-- Uniform Tab -->
+                <div id="uniform" class="tab-content">
+                    <form onsubmit="recordUniform(event)">
+                        <h3>Record Uniform Compliance</h3>
+                        <input type="number" id="uniformClassId" placeholder="Class ID" required>
+                        <input type="number" id="uniformTeacherId" placeholder="Teacher ID" required>
+                        <input type="date" id="uniformDate" required>
+                        <input type="number" id="uniformTotal" placeholder="Total Students" required>
+                        <input type="number" id="uniformCompliant" placeholder="Compliant Students" required>
+                        <textarea placeholder="Notes" id="uniformNotes"></textarea>
+                        <button type="submit">Record Uniform</button>
+                    </form>
+                </div>
+
+                <!-- Homework Tab -->
+                <div id="homework" class="tab-content">
+                    <form onsubmit="recordHomework(event)">
+                        <h3>Record Homework Status</h3>
+                        <input type="number" id="hwClassId" placeholder="Class ID" required>
+                        <input type="number" id="hwTeacherId" placeholder="Teacher ID" required>
+                        <input type="date" id="hwDate" required>
+                        <input type="number" id="hwTotal" placeholder="Total Students" required>
+                        <input type="number" id="hwSubmitted" placeholder="Homework Submitted" required>
+                        <input type="number" id="hwChecked" placeholder="Homework Checked" required>
+                        <input type="text" id="hwSubject" placeholder="Subject">
+                        <textarea placeholder="Notes" id="hwNotes"></textarea>
+                        <button type="submit">Record Homework</button>
+                    </form>
+                </div>
+
+                <!-- Late Comers Tab -->
+                <div id="latecomers" class="tab-content">
+                    <form onsubmit="recordLateComers(event)">
+                        <h3>Record Late Comers</h3>
+                        <input type="number" id="lcClassId" placeholder="Class ID" required>
+                        <input type="number" id="lcTeacherId" placeholder="Teacher ID" required>
+                        <input type="date" id="lcDate" required>
+                        <input type="number" id="lcCount" placeholder="Number of Late Comers" required>
+                        <textarea placeholder="Notes" id="lcNotes"></textarea>
+                        <button type="submit">Record Late Comers</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Performance Section -->
+            <section id="performance" class="section">
+                <h2>Teacher Performance Analysis</h2>
+                
+                <div class="filter-box">
+                    <select id="performanceTeacher">
+                        <option value="">Select Teacher</option>
+                    </select>
+                    <input type="number" id="perfMonth" min="1" max="12" placeholder="Month" value="6">
+                    <input type="number" id="perfYear" min="2000" placeholder="Year" value="2026">
+                    <button onclick="loadPerformanceData()">Load Performance</button>
+                </div>
+
+                <div id="performanceResults" class="performance-box">
+                    <!-- Performance data will be displayed here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
